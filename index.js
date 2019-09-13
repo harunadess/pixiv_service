@@ -27,7 +27,7 @@ function init() {
 	console.log('initialising...');
 
 	try {
-		username = require('./auth.json').user;
+		username = require('./auth.json').username;
 		password = require('./auth.json').password;
 
 		console.log('read auth');
@@ -36,15 +36,22 @@ function init() {
 		return false;
 	}
 
-	if(username === "" && password === "")
+	if(username === "") {
+		console.log('enter a username');
 		return false;
+	}
+
+	if(password === "") {
+		console.log('enter a password');
+		return false;
+	}
 
 	try {
 		inter = require('./config.json').checkLatency;
 		inter = parseInt(inter)*60000;
 
 		if(typeof(inter) !== 'number') {
-			console.log('ensure inter is a number');
+			console.log('ensure checkLatency is a number');
 			return false;
 		}
 
