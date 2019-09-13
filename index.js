@@ -3,7 +3,7 @@
 const PixivApi = require('pixiv-api-client');
 const Pixiv = new PixivApi();
 const MainLoopOptions = {
-	'search_target': 'exact_match_for_tags',
+	'search_target': 'partial_match_for_tags',
 	'sort': 'date_desc'
 };
 const BaseUrl = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id=';
@@ -11,13 +11,14 @@ const BaseUrl = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id='
 let username = '';
 let password = '';
 let inter = '';
-let tags = [];
+let searchTerms = [];
 let timer = null;
 let lastIds = [];
 
 let succInit = init();
 
 if(succInit) {
+	mainLoop();
 	timer = createInterval(mainLoop, inter);
 } else {
 	console.log('failed initialisation, exiting');
@@ -27,8 +28,8 @@ function init() {
 	console.log('initialising...');
 
 	try {
-		username = require('./auth.json').username;
-		password = require('./auth.json').password;
+		username = require('../auth.json').username;
+		password = require('../auth.json').password;
 
 		console.log('read auth');
 	} catch(error) {
@@ -55,15 +56,18 @@ function init() {
 			return false;
 		}
 
-		tags = require('./config.json').tags;
+		searchTerms = require('./config.json').searchTerms;
 
-		if(typeof(tags) !== 'object' && tags.length < 1) {
-			console.log('ensure tags has at least one tag in it');
+		if(typeof(searchTerms) !== 'object' && searchTerms.length < 1) {
+			console.log('ensure searchTerms has at least one tag in it');
 		}
 
-		tags.map(tag => {
+		searchTerms.map(tag => {
 			lastIds[tag] = -1;
 		});
+
+		console.log('searching for: ');
+		console.log(searchTerms);
 	} catch(error) {
 		console.log('ensure config.json is correctly set up');
 		return false;
@@ -99,7 +103,7 @@ function login() {
 
 function mainLoop() {
 	login().then(() => {
-		Promise.all(tags.map(tag => {
+		Promise.all(searchTerms.map(tag => {
 			Pixiv.searchIllust(tag, MainLoopOptions).then(json => {
 				let last = json.illusts[0];
 				if(lastIds[tag] !== last.id) {
@@ -115,6 +119,8 @@ function mainLoop() {
 				console.log(error);
 				clearTimeout(timer);
 			});
-		}));
+		})).then(() => {
+			console.log(`waiting for ${inter/60000} minutes..`);
+		});
 	});
 }
