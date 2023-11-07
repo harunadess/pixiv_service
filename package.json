@@ -1,0 +1,25 @@
+{
+  "name": "pixiv_tag_service",
+  "version": "1.0.0",
+  "description": "simple service to pull illustrations from pixiv",
+  "main": "index.js",
+  "scripts": {
+    "test": "test index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jordanjohnston/pixiv_service.git"
+  },
+  "keywords": [
+    "pixiv"
+  ],
+  "author": "jordan johnston",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/jordanjohnston/pixiv_service/issues"
+  },
+  "homepage": "https://github.com/jordanjohnston/pixiv_service#readme",
+  "dependencies": {
+    "pixiv-api-client": "^0.20.0"
+  }
+}

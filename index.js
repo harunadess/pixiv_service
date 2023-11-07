@@ -22,6 +22,7 @@ if(succInit) {
 	timer = createInterval(mainLoop, inter);
 } else {
 	console.log('failed initialisation, exiting');
+	process.exit(1);
 }
 
 function init() {
@@ -69,19 +70,11 @@ function init() {
 		console.log('searching for: ');
 		console.log(searchTerms);
 	} catch(error) {
-		console.log('ensure config.json is correctly set up');
+		console.error('ensure config.json is correctly set up. error:', error);
 		return false;
 	}
 
 	return true;
-}
-
-function login() {
-	return Pixiv.login(username, password).then(() => {
-
-	}).catch(error => {
-		console.log('error logging in.');
-	});
 }
 
 function createInterval(func, duration) {
@@ -96,8 +89,8 @@ function login() {
 		return true;
 	}).catch(error => {
 		console.log('error logging in.');
-		console.error(error);
-		return false;
+		// console.log(error);
+		return Promise.reject(false);
 	});
 }
 
@@ -122,5 +115,7 @@ function mainLoop() {
 		})).then(() => {
 			console.log(`waiting for ${inter/60000} minutes..`);
 		});
+	}).catch(error => {
+		process.exit(1);
 	});
 }
